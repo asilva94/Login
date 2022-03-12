@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using login.Entidades;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,10 +10,16 @@ namespace login.Controllers
 {
     public class UserController : Controller
     {
+        public readonly Contexto db;
+        public UserController(Contexto banco)
+        {
+            db = banco;
+        }
         // GET: UserController
         public ActionResult Index()
         {
-            return View();
+            return View(db.Users.ToList());
+
         }
 
 
@@ -26,16 +33,13 @@ namespace login.Controllers
         // POST: UserController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(User dadosTela)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+
+            db.Users.Add(dadosTela);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+
         }
 
         // GET: UserController/Edit/5
@@ -49,6 +53,7 @@ namespace login.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
         {
+
             try
             {
                 return RedirectToAction(nameof(Index));
